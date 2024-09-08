@@ -230,10 +230,10 @@ class PubmedAdapter(Adapter):
         Parse PubMed primary source
         """
         logger.info("Loading PubMed data from disk.")
-        if file.endswith('gz'):
-            file = gzip.open(file)
-        else:
-            file = open(file)
+        # if file.endswith('gz'):
+        #     file = gzip.open(file)
+        # else:
+        #     file = open(file)
 
         dicts_out = pp.parse_medline_xml(
         file,

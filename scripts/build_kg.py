@@ -1,7 +1,7 @@
 import sys
 from biocypher import BioCypher
-sys.path.append('/nfs/turbo/umms-drjieliu/proj/medlineKG/src/')
-# from adapters.pubmed_adapter import PubmedAdapter
+sys.path.append('/mnt/d/Documents/Lab/GLKB/')
+from adapters.pubmed_adapter import PubmedAdapter
 # from adapters.journal_adapter import JournalAdapter
 # from adapters.bern2_adapter import BERN2Adapter
 # from adapters.vocab_adapter import OntologyAdapter, OMAdapter
@@ -12,7 +12,7 @@ sys.path.append('/nfs/turbo/umms-drjieliu/proj/medlineKG/src/')
 # from adapters.go_adapter import GOAdapter
 # from adapters.primekg_adapter import PrimeKGAdapter
 # from adapters.gwas_adapter import GWASAdapter
-from adapters.pmc_fig_adapter import PMCFigAdapter
+# from adapters.pmc_fig_adapter import PMCFigAdapter
 
 import os
 from biocypher._logger import logger
@@ -23,8 +23,8 @@ def split(a, n):
     k, m = divmod(len(a), n)
     return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
 
-SCHEMA_CONFIG = "/nfs/turbo/umms-drjieliu/proj/medlineKG/data/graph_schema/glkb_schema_config.yaml"
-BIOCYPHER_CONFIG = "/nfs/turbo/umms-drjieliu/proj/medlineKG/data/graph_schema/glkb_biocypher_config.yaml"
+SCHEMA_CONFIG = "configs/graph_schema/glkb_schema_config.yaml"
+BIOCYPHER_CONFIG = "configs/graph_schema/glkb_biocypher_config.yaml"
 
 bc = BioCypher(
     biocypher_config_path=BIOCYPHER_CONFIG,
@@ -32,7 +32,7 @@ bc = BioCypher(
 )
 
 files = [
-    # (PubmedAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/pubmed_xml/'),
+    (PubmedAdapter, 'files/pubmed_xml/'),
     # (JournalAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/journal_list/J_Medline.txt'),
     # (BERN2Adapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/bern2_anno/pubmed_upload/')
     # (OntologyAdapter, )
@@ -42,7 +42,7 @@ files = [
     # (PrimeKGAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/primekg/kg.csv'),
     # (GWASAdapter, {'snp_gene':'/nfs/turbo/umms-drjieliu/proj/genomeKG/data/GWAS/processed/SNP_intra_gene.txt', 'snp_trait': '/nfs/turbo/umms-drjieliu/proj/genomeKG/data/GWAS/processed/SNP_trait.txt'}),
     # (OMAdapter, '/nfs/turbo/umms-drjieliu/usr/xinyubao/umls_matching/database/mappings_without_dup.csv'),
-    (PMCFigAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/figure_json_by_article/pmcimage_data.json'),
+    # (PMCFigAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/figure_json_by_article/pmcimage_data.json'),
 ]
 
 

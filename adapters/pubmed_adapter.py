@@ -103,6 +103,7 @@ class PubmedAdapter(Adapter):
         self.nodes = None
         self.edges = None
         self.dicts = None
+        self.pmids = None
         
     
     def _set_types_and_fields(
@@ -139,21 +140,24 @@ class PubmedAdapter(Adapter):
                     PubmedAdapter_ContainTerm_EdgeField
                 )
             ]
-
-    def get_nodes(self, pubmed_xml:str = None):
+            
+    def process_dicts(self):
         """
-        Returns a generator of node tuples for node types specified in the
-        adapter constructor.
+        Append nodes, edges, and pmids together after loading data.
         """
-        logger.info("Generating nodes.")
-        if pubmed_xml:
-            self.load_data(file=pubmed_xml)
-        elif not self.dicts:
+        logger.info("Processing dicts.")        
+        if not self.dicts:
             raise Exception('Please provide a pubmed xml, or run load_data first!')
+        
         if not self.nodes:
             self.nodes = []
-
+        if not self.edges:
+            self.edges = []
+        if not self.pmids:
+            self.pmids = []
+                     
         for article in self.dicts:
+            # nodes part
             article_info = self.article_node(article)
             article_info['pubtype'] = self.get_pubtype(article)
             self.nodes.append(PubmedArticle(
@@ -168,25 +172,8 @@ class PubmedAdapter(Adapter):
                 fields=self.node_fields,
                 properties=sent_info
                 ))
-        
-        for node in self.nodes:
-            yield (node.get_id(), node.get_label(), node.get_properties())
-    
-    def get_edges(self, pubmed_xml:str = None):
-        """
-        Returns a generator of edge tuples for edge types specified in the
-        adapter constructor.
-        """
-        logger.info("Generating edges.")
-        if pubmed_xml:
-            self.load_data(file=pubmed_xml)
-        elif not self.dicts:
-            raise Exception('Please provide a pubmed xml, or run load_data first!')
-        if not self.edges:
-            self.edges = []
-        
-        # fix this, connect with edge field classes above
-        for article in self.dicts:
+                
+            # edges part
             pmid = f"pmid{article['pmid']}"
             for i, topic in enumerate(self.get_mesh(article)):
                 self.edges.append(Edge(
@@ -221,6 +208,38 @@ class PubmedAdapter(Adapter):
                         label=PubmedAdapter_EdgeType.CONTAIN_SENT.value,
                         properties={}
                     ))
+                
+            # pmid part
+            self.pmids.append(str(article['pmid']))    
+
+    def get_nodes(self, pubmed_xml:str = None):
+        """
+        Returns a generator of node tuples for node types specified in the
+        adapter constructor.
+        """
+        logger.info("Generating nodes.")
+        if pubmed_xml:
+            self.load_data(file=pubmed_xml)
+        elif not self.dicts:
+            raise Exception('Please provide a pubmed xml, or run load_data first!')
+        if not self.nodes:
+            self.nodes = []
+        
+        for node in self.nodes:
+            yield (node.get_id(), node.get_label(), node.get_properties())
+    
+    def get_edges(self, pubmed_xml:str = None):
+        """
+        Returns a generator of edge tuples for edge types specified in the
+        adapter constructor.
+        """
+        logger.info("Generating edges.")
+        if pubmed_xml:
+            self.load_data(file=pubmed_xml)
+        elif not self.dicts:
+            raise Exception('Please provide a pubmed xml, or run load_data first!')
+        if not self.edges:
+            self.edges = []
             
         for edge in self.edges:
             yield (edge.get_id(), edge.get_source(), edge.get_target(), edge.get_label(), edge.get_properties())
@@ -235,13 +254,11 @@ class PubmedAdapter(Adapter):
         elif not self.dicts:
             raise Exception('Please provide a pubmed xml, or run load_data first!')
         
-        # print(self.dicts)
-        pmids = [str(article['pmid']) for article in self.dicts]
-        return pmids
+        return self.pmids
     
     def load_data(self, file:str):
         """
-        Parse PubMed primary source
+        Parse PubMed primary source.
         """
         logger.info("Loading PubMed data from disk.")
         # if file.endswith('gz'):
@@ -249,13 +266,13 @@ class PubmedAdapter(Adapter):
         # else:
         #     file = open(file)
 
-        dicts_out = pp.parse_medline_xml(
-        file,
-        year_info_only=True,
-        author_list=True,
-        reference_list=True,) # return list of dictionary
-        self.dicts = dicts_out
-        return self
+        self.dicts = pp.parse_medline_xml(
+            file,
+            year_info_only=True,
+            author_list=True,
+            reference_list=True
+        ) # return list of dictionary
+        self.process_dicts()
 
     def sentence_node(self, article):
         try:

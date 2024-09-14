@@ -96,19 +96,20 @@ for info in files:
 
             for f in fs:
                 logger.debug(f"Processing data in {f}")
+                print(f)
                 adapter = adpt()
-                # adapter.load_data(os.path.join(p, f))
+                adapter.load_data(os.path.join(p, f))
                 
                 try:
-                    bc.write_nodes(adapter.get_nodes(os.path.join(p, f)))
+                    bc.write_nodes(adapter.get_nodes())
                 except StopIteration: # no nodes generated
                     pass
                 try:
-                    bc.write_edges(adapter.get_edges(os.path.join(p, f)))
+                    bc.write_edges(adapter.get_edges())
                 except StopIteration: # no nodes generated
                     pass
                 try:
-                    pmids = adapter.get_pmids(os.path.join(p, f))
+                    pmids = adapter.get_pmids()
                     print(len(pmids))
                 except:
                     pass

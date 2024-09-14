@@ -225,6 +225,20 @@ class PubmedAdapter(Adapter):
         for edge in self.edges:
             yield (edge.get_id(), edge.get_source(), edge.get_target(), edge.get_label(), edge.get_properties())
 
+    def get_pmids(self, pubmed_xml:str = None):
+        """
+        Returns a list of str(PMID) inside the xml file.
+        """
+        logger.info("Listing PMIDs.")
+        if pubmed_xml:
+            self.load_data(file=pubmed_xml)
+        elif not self.dicts:
+            raise Exception('Please provide a pubmed xml, or run load_data first!')
+        
+        # print(self.dicts)
+        pmids = [str(article['pmid']) for article in self.dicts]
+        return pmids
+    
     def load_data(self, file:str):
         """
         Parse PubMed primary source

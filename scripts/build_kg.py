@@ -1,6 +1,6 @@
 import sys
 from biocypher import BioCypher
-sys.path.append('/mnt/d/Documents/Lab/GLKB/')
+sys.path.append('/home/shanghaohong/Lab/GLKB/')
 from adapters.pubmed_adapter import PubmedAdapter
 # from adapters.journal_adapter import JournalAdapter
 # from adapters.bern2_adapter import BERN2Adapter
@@ -96,15 +96,21 @@ for info in files:
 
             for f in fs:
                 logger.debug(f"Processing data in {f}")
-                adapter = adpt().load_data(os.path.join(p, f))
+                adapter = adpt()
+                # adapter.load_data(os.path.join(p, f))
                 
                 try:
-                    bc.write_nodes(adapter.get_nodes())
+                    bc.write_nodes(adapter.get_nodes(os.path.join(p, f)))
                 except StopIteration: # no nodes generated
                     pass
                 try:
-                    bc.write_edges(adapter.get_edges())
+                    bc.write_edges(adapter.get_edges(os.path.join(p, f)))
                 except StopIteration: # no nodes generated
+                    pass
+                try:
+                    pmids = adapter.get_pmids(os.path.join(p, f))
+                    print(len(pmids))
+                except:
                     pass
 
     else: # dont need to load from disk

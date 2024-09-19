@@ -1,9 +1,9 @@
 import sys
 from biocypher import BioCypher
 sys.path.append('/home/shanghaohong/Lab/GLKB/')
-from adapters.pubmed_adapter import PubmedAdapter
+# from adapters.pubmed_adapter import PubmedAdapter
 # from adapters.journal_adapter import JournalAdapter
-# from adapters.bern2_adapter import BERN2Adapter
+from adapters.bern2_adapter import BERN2Adapter
 # from adapters.vocab_adapter import OntologyAdapter, OMAdapter
 # from adapters.dbsnp_adapter import dbSNPAdapter
 # from adapters.event_adapter import EventAdapter
@@ -32,9 +32,9 @@ bc = BioCypher(
 )
 
 files = [
-    (PubmedAdapter, 'files/pubmed_xml/'),
+    # (PubmedAdapter, 'files/pubmed_xml/'),
     # (JournalAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/journal_list/J_Medline.txt'),
-    # (BERN2Adapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/bern2_anno/pubmed_upload/')
+    (BERN2Adapter, 'files/pubmed_upload/')
     # (OntologyAdapter, )
     # (dbSNPAdapter, '/nfs/turbo/umms-drjieliu/proj/genomeKG/data/dbSNP/processed/dbSNP_snp.txt'),
     # (ReactomeAdapter, {'data':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactomePathways.txt', 'rt2gene':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/NCBI2Reactome.txt', 'rt2pub':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactionPMIDS.txt', 'hier':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactomePathwaysRelation.txt'}),
@@ -72,6 +72,7 @@ logger.debug(bc.show_ontology_structure())
 for info in files:
     if len(info) == 2: # load file from disk
         if isinstance(info[1], dict): # load multiple files at once
+            print("case1")
             adpt, p = info
             adapter = adpt().load_data(**p)
             try:
@@ -85,7 +86,9 @@ for info in files:
         else:
             if isinstance(info[1], list): # load list of files
                 adpt, fs = info
+                print("case2")
             elif os.path.exists(info[1]):
+                print("case3")
                 adpt, p = info
                 if os.path.isdir(p):
                     fs = os.listdir(p)

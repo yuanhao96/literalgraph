@@ -125,80 +125,90 @@ class Custom_Grounder:
             """)
 
 class Gene_Grounder(Custom_Grounder):
-    def __init__(self, prefixes:list=None, file:str=None, save_path:str='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/gene.json'):
+    def __init__(self, prefixes:list=None, file:str=None, save_path:str='configs/custom_grounders/gene.json'):
         self.save_path = save_path
         self.terms = []
         if not prefixes:
             if file:
-                self.load_terms_from_file(json.load(open(file)))
+                with open(file, "r") as f:
+                    self.load_terms_from_file(json.load(f))
             else:
                 self.term_data = []
                 self.prefixes = SOURCES.get('gene')
                 for prefix in self.prefixes:
                     self._generate_terms(prefix)
-                json.dump(self.term_data, open(self.save_path, 'w'))
+                with open(self.save_path, "w") as f:
+                    json.dump(self.term_data, f)
         self.grounder = gilda.make_grounder(self.terms)
         
 
 class Disease_Grounder(Custom_Grounder):
-    def __init__(self, prefixes:list = None, file:str=None, save_path:str='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/disease.json'):
+    def __init__(self, prefixes:list = None, file:str=None, save_path:str='configs/custom_grounders/disease.json'):
         self.save_path = save_path
         self.terms = []
         if not prefixes:
             if file:
-                self.load_terms_from_file(json.load(open(file)))
+                with open(file, "r") as f:
+                    self.load_terms_from_file(json.load(f))
             else:
                 self.term_data = []
                 self.prefixes = SOURCES.get('disease')
                 for prefix in self.prefixes:
                     self._generate_terms(prefix)
-                json.dump(self.term_data, open(self.save_path, 'w'))
+                with open(self.save_path, "w") as f:
+                    json.dump(self.term_data, f)
         self.grounder = gilda.make_grounder(self.terms)
         
 
 class Chemical_Grounder(Custom_Grounder):
-    def __init__(self, prefixes:list = None, file:str=None, save_path:str='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/chemical.json'):
+    def __init__(self, prefixes:list = None, file:str=None, save_path:str='configs/custom_grounders/chemical.json'):
         self.save_path = save_path
         self.terms = []
         if not prefixes:
             if file:
-                self.load_terms_from_file(json.load(open(file)))
+                with open(file, "r") as f:
+                    self.load_terms_from_file(json.load(f))
             else:
                 self.term_data = []
                 self.prefixes = SOURCES.get('chemical')
                 for prefix in self.prefixes:
                     self._generate_terms(prefix)
-                json.dump(self.term_data, open(self.save_path, 'w'))
+                with open(self.save_path, "w") as f:
+                    json.dump(self.term_data, f)
         self.grounder = gilda.make_grounder(self.terms)
         
 
 class Anatomy_Grounder(Custom_Grounder):
-    def __init__(self, prefixes:list = None, file:str=None, save_path:str='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/anatomy.json'):
+    def __init__(self, prefixes:list = None, file:str=None, save_path:str='configs/custom_grounders/anatomy.json'):
         self.save_path = save_path
         self.terms = []
         if not prefixes:
             if file:
-                self.load_terms_from_file(json.load(open(file)))
+                with open(file, "r") as f:
+                    self.load_terms_from_file(json.load(f))
             else:
                 self.term_data = []
                 self.prefixes = SOURCES.get('anatomy')
                 for prefix in self.prefixes:
                     self._generate_terms(prefix)
-                json.dump(self.term_data, open(self.save_path, 'w'))
+                with open(self.save_path, "w") as f:
+                    json.dump(self.term_data, f)
         self.grounder = gilda.make_grounder(self.terms)
 
 class Organism_Grounder(Custom_Grounder):
-    def __init__(self, prefixes:list = None, file:str=None, save_path:str='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/organism.json'):
+    def __init__(self, prefixes:list = None, file:str=None, save_path:str='configs/custom_grounders/organism.json'):
         self.save_path = save_path
         self.terms = []
         if not prefixes:
             if file:
-                self.load_terms_from_file(json.load(open(file)))
+                with open(file, "r") as f:
+                    self.load_terms_from_file(json.load(f))
             else:
                 self.term_data = []
                 self.prefixes = SOURCES.get('organism')
                 for prefix in self.prefixes:
                     self._generate_terms(prefix)
-                json.dump(self.term_data, open(self.save_path, 'w'))
+                with open(self.save_path, "w") as f:
+                    json.dump(self.term_data, f)
         self.grounder = gilda.make_grounder(self.terms)
 

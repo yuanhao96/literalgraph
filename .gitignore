@@ -1,0 +1,8 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+biocypher-log/
+biocypher-out/
+files/
+.idea/
+configs/

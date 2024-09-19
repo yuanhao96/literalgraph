@@ -6,6 +6,7 @@ from itertools import chain
 from biocypher._logger import logger
 from adapters import Adapter, Node, Edge
 import re
+import json
 from entity_mapping.gilda_grounders import Gene_Grounder, Disease_Grounder, Chemical_Grounder, Organism_Grounder, Anatomy_Grounder
 from utils.str_utils import escape_text
 from nltk.tokenize import sent_tokenize
@@ -15,13 +16,13 @@ logger.debug(f"Loading module {__name__}.")
 LOCAL_GROUNDER = True
 if LOCAL_GROUNDER:
     GROUNDERS = {
-            'gene': Gene_Grounder(prefixes=None, file='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/gene.json'),
-            'DNA': Gene_Grounder(prefixes=None, file='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/gene.json'),
-            'disease': Disease_Grounder(prefixes=None, file='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/disease.json'),
-            'drug': Chemical_Grounder(prefixes=None, file='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/chemical.json'),
-            'species': Organism_Grounder(prefixes=None, file='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/organism.json'),
-            'cell_type': Anatomy_Grounder(prefixes=None, file='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/anatomy.json'),
-            'cell_line': Anatomy_Grounder(prefixes=None, file='/nfs/turbo/umms-drjieliu/proj/medlineKG/data/gilda_vocab/custom_grounders/anatomy.json'),
+            'gene': Gene_Grounder(prefixes=None, file='configs/custom_grounders/gene.json'),
+            'DNA': Gene_Grounder(prefixes=None, file='configs/custom_grounders/gene.json'),
+            'disease': Disease_Grounder(prefixes=None, file='configs/custom_grounders/disease.json'),
+            'drug': Chemical_Grounder(prefixes=None, file='configs/custom_grounders/chemical.json'),
+            'species': Organism_Grounder(prefixes=None, file='configs/custom_grounders/organism.json'),
+            'cell_type': Anatomy_Grounder(prefixes=None, file='configs/custom_grounders/anatomy.json'),
+            'cell_line': Anatomy_Grounder(prefixes=None, file='configs/custom_grounders/anatomy.json'),
         }
 else:
     GROUNDERS = {
@@ -244,7 +245,7 @@ class BERN2Adapter(Adapter):
         Parse BERN2 annotation
         """
         logger.info("Loading BERN2 annotation from disk.")
-        self.data = [dat for dat in self.parse_bern2_json(open(file))]
+        self.data = [dat for dat in self.parse_bern2_json(file)]
         return self
     
     def ground_mention(self, text, type):
@@ -256,7 +257,7 @@ class BERN2Adapter(Adapter):
             return [(m.term.get_curie(), m.score) for m in terms]
         return []
 
-    def parse_bern2_json(self, f):
+    def parse_bern2_json(self, path):
         true = True
         false = False
         NaN = None
@@ -270,8 +271,10 @@ class BERN2Adapter(Adapter):
                     return i
             return None  # In case the span doesn't fit in any sentence
 
+        with open(path, "r") as f:
+            data = json.load(f)
         
-        for l in f:
+        for l in data:
             dic = eval(l)
             sentence_boundaries = []
             if 'annotations' not in dic.keys():

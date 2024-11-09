@@ -202,3 +202,35 @@ class Organism_Grounder(Custom_Grounder):
                 json.dump(self.term_data, open(self.save_path, 'w'))
         self.grounder = gilda.make_grounder(self.terms)
 
+# Add to existing grounders
+class Variant_Grounder:
+    def __init__(self):
+        self.rs_prefix = "rs"
+        
+    def ground(self, text):
+        """
+        Ground variants, specifically RSIDs from dbSNP
+        Returns list of matches in Gilda-like format for consistency
+        """
+        # Create a simple object to mimic Gilda's Match structure
+        class VariantMatch:
+            def __init__(self, term, score):
+                self.term = term
+                self.score = score
+                
+        class VariantTerm:
+            def __init__(self, id):
+                self.id = id
+                
+            def get_curie(self):
+                return f"{self.id}"
+                
+        # Check if text matches RSID pattern (case insensitive)
+        text = text.lower().strip()
+        if text.startswith('rs') and text[2:].isdigit():
+            # Create a match with the RSID
+            term = VariantTerm(text)
+            return [VariantMatch(term, 1.0)]
+        
+        return []
+

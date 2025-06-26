@@ -1,7 +1,7 @@
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from transformers import pipeline
 import torch
-from entity_mapping.gilda_grounders import (
+from gilda_grounders import (
     Gene_Grounder, Disease_Grounder, Chemical_Grounder, 
     Organism_Grounder, Anatomy_Grounder, Variant_Grounder
 )

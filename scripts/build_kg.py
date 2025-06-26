@@ -1,18 +1,13 @@
 import sys
 from biocypher import BioCypher
-sys.path.append('/nfs/turbo/umms-drjieliu/proj/medlineKG/src/')
-# from adapters.pubmed_adapter import PubmedAdapter
-# from adapters.journal_adapter import JournalAdapter
-# from adapters.bern2_adapter import BERN2Adapter
-# from adapters.vocab_adapter import OntologyAdapter, OMAdapter
-# from adapters.dbsnp_adapter import dbSNPAdapter
-# from adapters.event_adapter import EventAdapter
-# from adapters.semantic_relation_adapter import SemanticRelationshipAdapter
-# from adapters.reactome_adapter import ReactomeAdapter
-# from adapters.go_adapter import GOAdapter
-# from adapters.primekg_adapter import PrimeKGAdapter
-# from adapters.gwas_adapter import GWASAdapter
-from adapters.pmc_fig_adapter import PMCFigAdapter
+from adapters.pubmed_adapter import PubmedAdapter
+from adapters.journal_adapter import JournalAdapter
+from adapters.vocab_adapter import OntologyAdapter, OMAdapter
+from adapters.dbsnp_adapter import dbSNPAdapter
+from adapters.reactome_adapter import ReactomeAdapter
+from adapters.go_adapter import GOAdapter
+from adapters.primekg_adapter import PrimeKGAdapter
+from adapters.gwas_adapter import GWASAdapter
 
 import os
 from biocypher._logger import logger
@@ -32,40 +27,16 @@ bc = BioCypher(
 )
 
 files = [
-    # (PubmedAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/pubmed_xml/'),
-    # (JournalAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/journal_list/J_Medline.txt'),
-    # (BERN2Adapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/bern2_anno/pubmed_upload/')
-    # (OntologyAdapter, )
-    # (dbSNPAdapter, '/nfs/turbo/umms-drjieliu/proj/genomeKG/data/dbSNP/processed/dbSNP_snp.txt'),
-    # (ReactomeAdapter, {'data':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactomePathways.txt', 'rt2gene':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/NCBI2Reactome.txt', 'rt2pub':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactionPMIDS.txt', 'hier':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactomePathwaysRelation.txt'}),
-    # (GOAdapter, ),
-    # (PrimeKGAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/primekg/kg.csv'),
-    # (GWASAdapter, {'snp_gene':'/nfs/turbo/umms-drjieliu/proj/genomeKG/data/GWAS/processed/SNP_intra_gene.txt', 'snp_trait': '/nfs/turbo/umms-drjieliu/proj/genomeKG/data/GWAS/processed/SNP_trait.txt'}),
-    # (OMAdapter, '/nfs/turbo/umms-drjieliu/usr/xinyubao/umls_matching/database/mappings_without_dup.csv'),
-    (PMCFigAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/figure_json_by_article/pmcimage_data.json'),
+    (PubmedAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/pubmed_xml/'),
+    (JournalAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/journal_list/J_Medline.txt'),
+    (OntologyAdapter, )
+    (dbSNPAdapter, '/nfs/turbo/umms-drjieliu/proj/genomeKG/data/dbSNP/processed/dbSNP_snp.txt'),
+    (ReactomeAdapter, {'data':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactomePathways.txt', 'rt2gene':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/NCBI2Reactome.txt', 'rt2pub':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactionPMIDS.txt', 'hier':'/nfs/turbo/umms-drjieliu/proj/medlineKG/data/reactome/ReactomePathwaysRelation.txt'}),
+    (GOAdapter, ),
+    (PrimeKGAdapter, '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/primekg/kg.csv'),
+    (GWASAdapter, {'snp_gene':'/nfs/turbo/umms-drjieliu/proj/genomeKG/data/GWAS/processed/SNP_intra_gene.txt', 'snp_trait': '/nfs/turbo/umms-drjieliu/proj/genomeKG/data/GWAS/processed/SNP_trait.txt'}),
+    (OMAdapter, '/nfs/turbo/umms-drjieliu/usr/xinyubao/umls_matching/database/mappings_without_dup.csv'),
 ]
-
-
-# p = '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/bern2_anno/pubmed_upload/'
-# subs = [fld for fld in list(split(os.listdir(p), 5))]
-# files = [
-#     (BERN2Adapter, subs[4])
-# ]
-# p = '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/pubmed_xml/'
-# subs = [fld for fld in list(split(os.listdir(p), 5))]
-# files = [
-#     (PubmedAdapter, subs[3][-1:])
-# ]
-# p = ''
-# subs = [fld for fld in list(split(glob('/nfs/turbo/umms-drjieliu/proj/DEM_PM/DEM_PM_RES/*/*'), 5))]
-# files = [
-#     (EventAdapter, subs[3])
-# ]
-# p = '/nfs/turbo/umms-drjieliu/proj/medlineKG/data/neo4j_csv/semantic_relationships/'
-# subs = [fld for fld in list(split(os.listdir(p), 5))]
-# files = [
-#     (SemanticRelationshipAdapter, subs[4])
-# ]
 
 logger.debug(bc.show_ontology_structure())
 

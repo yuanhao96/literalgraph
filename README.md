@@ -1,10 +1,10 @@
-# MedlineKG Source Code
+# LiteralGraph Source Code
 
-This directory contains the source code for MedlineKG, a biomedical knowledge graph construction and evaluation system that processes PubMed literature and integrates multiple biomedical data sources.
+This directory contains the source code for LiteralGraph, a biomedical knowledge graph construction and evaluation system that processes PubMed literature and integrates multiple biomedical data sources.
 
 ## Project Overview
 
-MedlineKG is designed to build a comprehensive biomedical knowledge graph by:
+LiteralGraph is designed to build a comprehensive biomedical knowledge graph by:
 - Extracting entities from PubMed articles using state-of-the-art NER models
 - Integrating data from multiple biomedical databases (dbSNP, Reactome, GO, PrimeKG, GWAS, etc.)
 - Evaluating entity extraction performance using LLM-based validation

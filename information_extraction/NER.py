@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 from transformers import pipeline
 import torch
@@ -5,6 +8,7 @@ from gilda_grounders import (
     Gene_Grounder, Disease_Grounder, Chemical_Grounder, 
     Organism_Grounder, Anatomy_Grounder, Variant_Grounder
 )
+import openai
 
 class BiomedicalNER:
     def __init__(self, use_local_grounders=True):
@@ -53,6 +57,8 @@ class BiomedicalNER:
                 self.pipelines[entity_type] = pipeline("ner", model=model, tokenizer=tokenizer)
             except Exception as e:
                 print(f"Warning: Failed to load {entity_type} model: {str(e)}")
+        
+        self.client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def ground_entity(self, text, entity_type):
         """
@@ -64,7 +70,7 @@ class BiomedicalNER:
         terms = self.grounders[entity_type].ground(text)
         return [(m.term.get_curie(), m.score) for m in terms]
 
-    def extract_entities(self, text, entity_types='all', confidence_threshold=0.5, ground_entities=True):
+    def extract_entities(self, text, entity_types='all', confidence_threshold=0.5, ground_entities=True, evaluate_with_llm=False):
         """
         Extract and optionally ground entities from input text
         Args:
@@ -121,14 +127,18 @@ class BiomedicalNER:
                         'end': end,
                         'score': round(sum(scores) / len(scores), 3)
                     }
+                    if evaluate_with_llm and entity_info['score'] < 0.9:
+                        correct = self.evaluate_ner_with_llm(text, entity, entity_type)
+                    else:
+                        correct = True
                     
                     # Add grounding information if requested
                     if ground_entities:
                         groundings = self.ground_entity(entity, entity_type)
                         if groundings:
                             entity_info['groundings'] = groundings
-                    
-                    entities.append(entity_info)
+                    if correct:
+                        entities.append(entity_info)
                     i = j if j > i + 1 else i + 1
                     
                 results[entity_type] = entities
@@ -137,6 +147,23 @@ class BiomedicalNER:
                 print(f"Error extracting {entity_type} entities: {str(e)}")
                 
         return results
+    
+    def evaluate_ner_with_llm(self, sentence, mention, entity_type):
+        # Prompt LLM to check if the mention is a correct extraction for the entity in the sentence
+        prompt = (
+            f"You are a biomedical NLP expert. You are given a sentence and an extracted biomedical mention from it to evaluate if the mention is meaningful {entity_type} entity."
+            f"Sentence: \"{sentence}\"\n"
+            f"Extracted biomedical mention: \"{mention}\"\n"
+            "Answer 'yes' if the mention is a meaningful biomedical entity, or 'no' only if the mention is definitely not a biomedical entity."
+        )
+        response = self.client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=32,
+            temperature=0
+        )
+        answer = response.choices[0].message.content.strip().lower()
+        return "no" not in answer
 
 # Example usage
 if __name__ == "__main__":
@@ -146,7 +173,7 @@ if __name__ == "__main__":
               The variant rs987654 is associated with drug response.
               The EGFR T790M variant was treated with gefitinib."""
     
-    results = ner.extract_entities(text, entity_types='all', ground_entities=True)
+    results = ner.extract_entities(text, entity_types='all', ground_entities=True, evaluate_with_llm=True)
     
     for entity_type, entities in results.items():
         if entities:

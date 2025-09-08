@@ -7,10 +7,9 @@ class NEREvaluator:
         self.db_uri = db_uri
         self.db_user = db_user
         self.db_password = db_password
-        self.openai_api_key = openai_api_key
         self.citation_threshold = citation_threshold
         self.fp_rate_threshold = fp_rate_threshold
-        openai.api_key = openai_api_key
+        self.client = openai.OpenAI(api_key=openai_api_key)
 
     def get_all_vocab_ids(self):
         cypher = f"MATCH (v:Vocabulary) WHERE v.n_citation > {self.citation_threshold} RETURN v.id"
@@ -38,15 +37,15 @@ class NEREvaluator:
             f"NER Extraction: \"{mention}\"\n"
             f"Entity: \"{vocab_name}\"\n"
             "Is the NER extraction a correct mention of the entity in the sentence? "
-            "Answer 'yes' or 'no' and briefly justify."
+            "Answer 'yes' or 'no'."
         )
-        response = openai.ChatCompletion.create(
+        response = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=32,
             temperature=0
         )
-        answer = response.choices[0].message['content'].strip().lower()
+        answer = response.choices[0].message.content.strip().lower()
         return "yes" in answer
 
     def evaluate_vocab(self, vocab_id, limit=100):

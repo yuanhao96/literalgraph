@@ -1,5 +1,3 @@
-import pyobo
-import pyobo.api.utils
 from collections import Counter
 import gilda
 from gilda import Term, make_grounder
@@ -9,7 +7,6 @@ from biocypher._logger import logger
 import json
 
 logger.debug(f"Loading module {__name__}.")
-logger.debug(pyobo.get_version())
 
 SOURCES = {
     'gene': ["hgnc", "mesh"],
@@ -50,6 +47,10 @@ class Custom_Grounder:
                 ))
 
     def _generate_terms(self, prefix:str):
+        # Import pyobo only when needed
+        import pyobo
+        import pyobo.api.utils
+        
         version = pyobo.api.utils.get_version(prefix)
         onto = pyobo.get_ontology(prefix)
         names = onto.get_id_name_mapping()
